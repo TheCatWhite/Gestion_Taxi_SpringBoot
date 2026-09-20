@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.Entity.Driver;
+import com.example.demo.Enums.DriverStatus;
 import com.example.demo.Exception.DriverNotFoundException;
 import com.example.demo.Mapper.DriverMapper;
 import com.example.demo.Repository.DriverRepository;
@@ -21,8 +22,7 @@ public class DriverServiceImpl implements DriverService {
 
     public DriverServiceImpl(
             DriverRepository driverRepository,
-            DriverMapper driverMapper
-    ) {
+            DriverMapper driverMapper) {
         this.driverRepository = driverRepository;
         this.driverMapper = driverMapper;
     }
@@ -71,8 +71,7 @@ public class DriverServiceImpl implements DriverService {
         driver.setPhone(request.getPhone());
         driver.setLicenseNumber(request.getLicenseNumber());
         driver.setLicenseExpirationDate(
-                request.getLicenseExpirationDate()
-        );
+                request.getLicenseExpirationDate());
         driver.setHireDate(request.getHireDate());
 
         Driver updatedDriver = driverRepository.save(driver);
@@ -88,4 +87,56 @@ public class DriverServiceImpl implements DriverService {
 
         driverRepository.delete(driver);
     }
+
+    @Override
+    public boolean isLicenseValid(Long driverId) {
+        Driver driver = driverRepository.findById(driverId)
+                .orElseThrow(() -> new DriverNotFoundException(
+                        "le chauffeur avec l'ID " + driverId + " n'a pas été trouvé"));
+
+        return driver.getLicenseExpirationDate().isAfter(java.time.LocalDate.now());
+    }
+
+    @Override
+    public boolean isAvailable(Long driverId) {
+        Driver driver = driverRepository.findById(driverId)
+                .orElseThrow(() -> new DriverNotFoundException(
+                        "le chauffeur avec l'ID " + driverId + " n'a pas été trouvé"));
+
+        return driver.getStatus() == DriverStatus.DISPONIBLE;
+    }
+
+    @Override
+    public void changeStatus(Long driverId, DriverStatus status) {
+        Driver driver = driverRepository.findById(driverId)
+                .orElseThrow(() -> new DriverNotFoundException(
+                        "le chauffeur avec l'ID " + driverId + " n'a pas été trouvé"));
+
+        driver.setStatus(status);
+        driverRepository.save(driver);
+    }
+
+    @Override
+    public List<DriverResponse> findAvailableDrivers() {
+        List<Driver> availableDrivers = driverRepository.findByStatus(DriverStatus.DISPONIBLE);
+        List<DriverResponse> responses = new ArrayList<>();
+        for (Driver driver : availableDrivers) {
+            responses.add(driverMapper.toResponse(driver));
+        }
+        return responses;
+    }
+
+    @Override
+    public List<DriverResponse> findDriversWithValidLicense() {
+        List<Driver> allDrivers = driverRepository.findAll();
+        List<DriverResponse> responses = new ArrayList<>();
+        for (Driver driver : allDrivers) {
+            if (driver.getLicenseExpirationDate().isAfter(java.time.LocalDate.now())) {
+                responses.add(driverMapper.toResponse(driver));
+            }
+        }
+        return responses;
+    }
+
+
 }

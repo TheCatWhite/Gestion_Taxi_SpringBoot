@@ -10,9 +10,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+
 import com.example.demo.Service.DriverService;
 import com.example.demo.dto.Driver.DriverRequest;
 import com.example.demo.dto.Driver.DriverResponse;
+
 
 @Controller
 @RequestMapping("/drivers")
@@ -82,4 +84,13 @@ public class DriverController {
 
         return "drivers/edit";
     }
+
+    //Avoir les chauffeurs qui on une license valide
+    @GetMapping("/valid-license")
+    public String findDriversWithValidLicense(Model model) {
+        List<DriverResponse> drivers = driverService.findDriversWithValidLicense();
+        model.addAttribute("drivers", drivers);
+        return "drivers/list";
+    }
+    
 }

@@ -18,20 +18,20 @@ public class Driver {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    @Column (nullable= false)
     private String firstName;
 
     private String lastName;
-
+    @Column (unique = true , nullable= false)
     private String phone;
     @Column (unique = true , nullable= false)
     private String licenseNumber;
-
+    @Column (nullable= false)
     private LocalDate licenseExpirationDate;
 
     @Enumerated(EnumType.STRING)
     private DriverStatus status;
-
+    @Column (nullable= false)
     private LocalDate hireDate;
 
 
