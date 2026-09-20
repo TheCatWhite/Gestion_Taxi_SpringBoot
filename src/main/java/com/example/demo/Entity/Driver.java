@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import com.example.demo.Enums.DriverStatus;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -23,7 +24,7 @@ public class Driver {
     private String lastName;
 
     private String phone;
-
+    @Column (unique = true , nullable= false)
     private String licenseNumber;
 
     private LocalDate licenseExpirationDate;
