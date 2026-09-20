@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.Entity.Driver;
+import com.example.demo.Exception.DriverNotFoundException;
 import com.example.demo.Mapper.DriverMapper;
 import com.example.demo.Repository.DriverRepository;
 import com.example.demo.Service.DriverService;
@@ -40,7 +41,7 @@ public class DriverServiceImpl implements DriverService {
     public DriverResponse findById(Long id) {
 
         Driver driver = driverRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Driver not found"));
+                .orElseThrow(() -> new DriverNotFoundException("le chauffeur avec l'ID " + id + " n'a pas été trouvé"));
 
         return driverMapper.toResponse(driver);
     }
@@ -63,7 +64,7 @@ public class DriverServiceImpl implements DriverService {
     public DriverResponse update(Long id, DriverRequest request) {
 
         Driver driver = driverRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Driver not found"));
+                .orElseThrow(() -> new DriverNotFoundException("le chauffeur avec l'ID " + id + " n'a pas été trouvé"));
 
         driver.setFirstName(request.getFirstName());
         driver.setLastName(request.getLastName());
@@ -83,7 +84,7 @@ public class DriverServiceImpl implements DriverService {
     public void delete(Long id) {
 
         Driver driver = driverRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Driver not found"));
+                .orElseThrow(() -> new DriverNotFoundException("le chauffeur avec l'ID " + id + " n'a pas été trouvé"));
 
         driverRepository.delete(driver);
     }
