@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -36,9 +37,22 @@ public class VehiculeController {
         return "vehicules/create";
     }
 
-    @PostMapping("/create")
+    @PostMapping
     public String createVehicule(@ModelAttribute VehiculeRequest vehiculeRequest) {
         vehiculeService.create(vehiculeRequest);
+        return "redirect:/vehicules";
+    }
+
+    @GetMapping("/{id}")
+    public String showVehiculeDetails(@PathVariable Long id, Model model) {
+        VehiculeReponse vehicule = vehiculeService.findById(id);
+        model.addAttribute("vehicule", vehicule);
+        return "vehicules/detail";
+    }
+
+    @GetMapping("/{id}/delete")
+    public String deleteVehicule(@PathVariable Long id) {
+        vehiculeService.delete(id);
         return "redirect:/vehicules";
     }
 }
