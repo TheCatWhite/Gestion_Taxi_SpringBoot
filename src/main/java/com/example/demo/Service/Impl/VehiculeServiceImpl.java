@@ -1,9 +1,11 @@
 package com.example.demo.Service.Impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.example.demo.Entity.Vehicule;
-import com.example.demo.Exception.DriverNotFoundException;
 import com.example.demo.Exception.VehiculeException;
 import com.example.demo.Mapper.VehiculeMapper;
 import com.example.demo.Repository.VehiculeRepository;
@@ -44,6 +46,24 @@ public class VehiculeServiceImpl implements VehiculeService {
 
         return vehiculeMapper.toReponse(vehicule);
     }
-    
+
+    @Override
+    public List<VehiculeReponse> findAll() {
+        List<Vehicule> vehicules = vehiculeRepository.findAll();
+        List<VehiculeReponse> reponses = new ArrayList<>();
+        for (Vehicule v : vehicules){
+            reponses.add(vehiculeMapper.toReponse(v));
+        }
+        return reponses;
+       
+    }
+    @Override
+    public void delete(Long id) {
+        Vehicule vehicule = vehiculeRepository.findById(id)
+                .orElseThrow(() -> new VehiculeException(
+                        "le vehicule avec l'ID " + id + " n'a pas été trouvé"));
+        vehiculeRepository.delete(vehicule);
+
+    }
     
 }
